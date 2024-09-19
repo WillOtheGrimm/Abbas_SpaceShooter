@@ -20,11 +20,17 @@ public class Player : MonoBehaviour
     private float maxSpeed = 10f;
 
     private float acceleration;
+    private bool isInput = false;
+    //Variable to control how long it takes to stop
+    private float timeToStop = 2f;
+    private float deccelearation;
+
+
 
     void Start()
     {
-        acceleration = maxSpeed / timeToReachSpeed;
-        
+        acceleration = (maxSpeed - shipSpeed) / timeToReachSpeed;
+        deccelearation = (shipSpeed - maxSpeed) / timeToStop;
     }
 
     void Update()
@@ -53,39 +59,54 @@ public class Player : MonoBehaviour
         }
 
 
+        if (shipSpeed <= 1)
+        {
+            shipSpeed = 1;
+        }
+
+       /* if (velocity == Vector3.zero)
+        {
+            shipSpeed += deccelearation * Time.deltaTime;
+        }*/
 
 
         if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
         {
             velocity += Vector3.down ;
-            shipSpeed += acceleration * Time.deltaTime;
-
+            isInput = true;
         }
-        else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
         {
-
             velocity += Vector3.up;
-            shipSpeed += acceleration * Time.deltaTime;
-
+            isInput = true;
         }
-
-
-
         if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
             velocity += Vector3.right;
-            shipSpeed += acceleration * Time.deltaTime;
-
+            isInput = true;
         }
-        else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
             velocity += Vector3.left;
-            shipSpeed += acceleration * Time.deltaTime;
-
+            isInput = true;
         }
 
-        transform.position += velocity.normalized * shipSpeed * Time.deltaTime;
 
+        if (isInput)
+        {
+            shipSpeed += acceleration * Time.deltaTime;
+        }
+        else
+        {
+            shipSpeed += deccelearation * Time.deltaTime;
+            transform.position -= velocity.normalized * shipSpeed * Time.deltaTime;
+        }
+
+
+
+        transform.position += velocity.normalized * shipSpeed * Time.deltaTime;
+        isInput = false;
     }
 
 
