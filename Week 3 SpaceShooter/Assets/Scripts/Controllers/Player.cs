@@ -48,7 +48,6 @@ public class Player : MonoBehaviour
     void PlayerMovement()
     {
 
-        velocity = Vector3.zero;
         
 
 
@@ -58,54 +57,59 @@ public class Player : MonoBehaviour
             shipSpeed = maxSpeed;
         }
 
-
-        if (shipSpeed <= 1)
+        //To keep the speed from dropping in the negative and to reset the velocity once the ship stop moving
+        if (shipSpeed <= 0)
         {
-            shipSpeed = 1;
+            shipSpeed = 0;
+            velocity = Vector3.zero;
         }
 
-       /* if (velocity == Vector3.zero)
-        {
-            shipSpeed += deccelearation * Time.deltaTime;
-        }*/
-
-
+       
+        //This is for the input to make the ship move in the wanted direction and also check if an input is being registered 
+        //down control
         if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
         {
             velocity += Vector3.down ;
             isInput = true;
         }
-
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+        //up control
+        else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
         {
             velocity += Vector3.up;
             isInput = true;
         }
+        //right control
         if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
             velocity += Vector3.right;
             isInput = true;
         }
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
+        //left control
+        else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
             velocity += Vector3.left;
             isInput = true;
         }
 
-
+        //Make the ship move when an input is registered
         if (isInput)
         {
+            //move the player by velocity and multiply it the speed (affected by acceleration)
+            transform.position += velocity.normalized * shipSpeed * Time.deltaTime;
+
             shipSpeed += acceleration * Time.deltaTime;
         }
+
+        //If there is no input make the ship speed decrease within timeframe and keep it moving until speed is 0
         else
         {
             shipSpeed += deccelearation * Time.deltaTime;
-            transform.position -= velocity.normalized * shipSpeed * Time.deltaTime;
+            velocity += velocity.normalized * shipSpeed * Time.deltaTime;
+            transform.position += velocity.normalized * shipSpeed * Time.deltaTime;
         }
 
 
-
-        transform.position += velocity.normalized * shipSpeed * Time.deltaTime;
+        //make sure that if none if the input it being pressed the input checker is set to false
         isInput = false;
     }
 
