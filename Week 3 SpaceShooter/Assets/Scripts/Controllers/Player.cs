@@ -26,6 +26,8 @@ public class Player : MonoBehaviour
     private float deccelearation;
 
 
+    public float lerpSpeed;
+
 
     void Start()
     {
@@ -42,7 +44,12 @@ public class Player : MonoBehaviour
         PlayerMovement();
 
 
-        Debug.Log(shipSpeed);
+       // Debug.Log(shipSpeed);
+
+
+
+       
+        
     }
 
     void PlayerMovement()
