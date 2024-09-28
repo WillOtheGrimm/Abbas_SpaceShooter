@@ -26,7 +26,20 @@ public class Player : MonoBehaviour
     private float deccelearation;
 
 
-    public float lerpSpeed;
+
+    Color detectionColor = Color.green;
+
+
+
+    //Week 4 changes:
+    //task 1
+    public int numberOfPoints;
+    public float detectionRange;
+    //task 2
+    public GameObject powerUpPrefab;
+    private int powerUpRadius = 2;
+    public int powerUpCount;
+
 
 
     void Start()
@@ -38,18 +51,17 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-        //this line is to make the position go positive on x axis and multiply it by 0.01
-        //transform.position += velocity;
 
         PlayerMovement();
-
-
-       // Debug.Log(shipSpeed);
+       EnemyRadar(detectionRange, numberOfPoints);
 
 
 
-       
-        
+        if (Input.GetKeyDown (KeyCode.Q))
+        {
+            SpawnPowerups(powerUpRadius, powerUpCount);
+        }
+
     }
 
     void PlayerMovement()
@@ -122,5 +134,72 @@ public class Player : MonoBehaviour
 
 
 
+    public void EnemyRadar(float radius, int circlePoints)
+    {
+
+
+        //This sets the value of every angle relative to the amount of points
+        int anglesIncrement = 360 / circlePoints;
+
+        //Creating a list that holds the angles
+        List<float> angles = new List<float> () ;
+
+        //for loop that populate the list with a series of angles.
+        for (int index = 0; index <= circlePoints; index++)
+        {
+            angles.Add(anglesIncrement * index);
+            Debug.Log("angle is: " + angles[index]);
+
+            //second loop to cycle through the list (now populated) and to set the coorinate
+            for (int i = 1; i < angles.Count; i++)
+            {
+            Vector3 pointA = transform.position + new Vector3(Mathf.Cos(angles[i - 1] * Mathf.Deg2Rad) * radius , Mathf.Sin(angles[i - 1] * Mathf.Deg2Rad) * radius);
+
+            Vector3 pointB = transform.position + new Vector3(Mathf.Cos(angles[i] * Mathf.Deg2Rad) * radius, Mathf.Sin(angles[i] * Mathf.Deg2Rad) * radius);
+
+
+
+                Debug.DrawLine (pointA, pointB, detectionColor);
+            }
+
+        }
+        //checks if enemy is within radius range
+        if (Vector3.Distance(transform.position , enemyTransform.position) <= radius)
+        {
+            detectionColor = Color.red;
+        }
+        else detectionColor = Color.green;
+
+    }
+
+
+
+    public void SpawnPowerups(float radius, int numberOfPowerups)
+    {
+        //determine the angle depending on the amount of power up
+        int powerAngleInc = 360 / numberOfPowerups;
+
+
+        //Creating a list that holds the angles
+        List<float> powerUpAngles = new List<float>();
+
+        //for loop that populate the list with a series of angles.
+        for (int index = 0; index <= numberOfPowerups; index++)
+        {
+            powerUpAngles.Add(powerAngleInc * index);
+
+        }
+
+            //second loop to cycle through the list (now populated) and to set the coorinate
+
+            for (int i = 1; i < powerUpAngles.Count; i++)
+            {
+                Vector3 powerCoord = transform.position + new Vector3(Mathf.Cos(powerUpAngles[i -1] * Mathf.Deg2Rad) * radius, Mathf.Sin(powerUpAngles[i -1] * Mathf.Deg2Rad) * radius);
+                Instantiate(powerUpPrefab, powerCoord, Quaternion.identity);
+
+
+            }
+
+    }
 
 }
