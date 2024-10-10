@@ -43,6 +43,10 @@ public class Player : MonoBehaviour
 
 
 
+    //Final assignment changes:
+    public GameObject homingMissile;
+
+
     void Start()
     {
         acceleration = maxSpeed / accelerationTime;
@@ -65,6 +69,15 @@ public class Player : MonoBehaviour
         {
             SpawnPowerups(powerUpRadius, powerUpCount);
         }
+
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Instantiate(homingMissile, transform.position, transform.rotation);
+        }
+
+
+
 
     }
 
