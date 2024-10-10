@@ -42,6 +42,7 @@ public class Player : MonoBehaviour
 
 
 
+
     void Start()
     {
         acceleration = maxSpeed / accelerationTime;
@@ -54,6 +55,8 @@ public class Player : MonoBehaviour
 
 
         PlayerMovement();
+        PlayerRotation();
+
        EnemyRadar(detectionRange, numberOfPoints);
 
 
@@ -65,20 +68,31 @@ public class Player : MonoBehaviour
 
     }
 
+
+
+
     void PlayerMovement()
     {
 
-
+       // rotateSpeed = 50;
 
         {
             Vector2 currentInput = Vector2.zero;
             if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
             {
                 currentInput += Vector2.left;
+
+
             }
+
+
+
+
             if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             {
                 currentInput += Vector2.right;
+                
+
             }
             if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
             {
@@ -185,5 +199,41 @@ public class Player : MonoBehaviour
             }
 
     }
+
+    float rotationSpeed = 3f;
+    float rotationAngles = 0f;
+    float rotation = 0f;
+
+    public void PlayerRotation()
+    {
+
+
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
+        {
+            rotation = 90;
+        }
+        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
+        {
+            rotation = -90;
+        }
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+        {
+            rotation = 0;
+        }
+        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
+        {
+            rotation = 180;
+        }
+
+        rotationAngles = Mathf.Lerp(rotationAngles, rotation, Time.deltaTime * rotationSpeed);
+        transform.eulerAngles = new Vector3(0, 0, rotationAngles);
+
+    }
+
+
+
+
+
+
 
 }
