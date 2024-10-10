@@ -42,6 +42,7 @@ public class Missile : MonoBehaviour
 
         Vector3 direction = enemyPosition.position - transform.position;
         float angle = Vector3.Angle(direction, transform.forward);
+        
 
 
 
@@ -50,10 +51,6 @@ public class Missile : MonoBehaviour
 
 
 
-
-
-
-        //LookAt2D(transform, enemyPosition.position);
 
 
 
@@ -62,14 +59,6 @@ public class Missile : MonoBehaviour
 
     }
 
-   /* public void LookAt2D(Transform transform, Vector2 target)
-    {
-        Vector2 current = transform.position;
-        var direction = target - current;
-        var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-    }
-
-*/
+  
 
 }
