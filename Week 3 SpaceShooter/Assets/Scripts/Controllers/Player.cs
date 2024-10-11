@@ -61,11 +61,11 @@ public class Player : MonoBehaviour
         PlayerMovement();
         PlayerRotation();
 
-       EnemyRadar(detectionRange, numberOfPoints);
+        EnemyRadar(detectionRange, numberOfPoints);
 
 
 
-        if (Input.GetKeyDown (KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             SpawnPowerups(powerUpRadius, powerUpCount);
         }
@@ -74,6 +74,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             Instantiate(homingMissile, transform.position, transform.rotation);
+
         }
 
 
@@ -83,64 +84,82 @@ public class Player : MonoBehaviour
 
 
 
+    float rotationSpeed = 3f;
+    float rotationAngles = 0f;
+    float rotation = 0f;
+
 
     void PlayerMovement()
     {
 
-       // rotateSpeed = 50;
+        // rotateSpeed = 50;
 
+
+        Vector2 currentInput = Vector2.zero;
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
-            Vector2 currentInput = Vector2.zero;
-            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
-            {
-                currentInput += Vector2.left;
+            currentInput += Vector2.left;
 
+
+        }
+
+
+
+
+        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
+        {
+            currentInput += Vector2.right;
+
+
+        }
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+        {
+            currentInput += Vector2.up;
+        }
+        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
+        {
+            currentInput += Vector2.down;
+        }
+
+        if (currentInput.magnitude > 0)
+        {
+            //Our character is accelerating
+            currentVelocity += acceleration * Time.deltaTime * (Vector3)currentInput.normalized;
+            rotation = Mathf.Atan2(currentInput.y, currentInput.x);
+
+
+
+
+
+            //This is for the rotation (thx to Marco)
+            rotationAngles = Mathf.LerpAngle(rotationAngles, rotation * Mathf.Rad2Deg -90, Time.deltaTime * rotationSpeed);
+            transform.eulerAngles = new Vector3(0, 0, rotationAngles);
+            Debug.Log(currentInput);
+
+            if (currentVelocity.magnitude > maxSpeed)
+            {
+                currentVelocity = currentVelocity.normalized * maxSpeed;
 
             }
-
-
-
-
-            if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
+        }
+        else
+        {
+            //Our character is decelerating
+            Vector3 velocityDelta = (Vector3)currentVelocity.normalized * deceleration * Time.deltaTime;
+            if (velocityDelta.magnitude > currentVelocity.magnitude)
             {
-                currentInput += Vector2.right;
-                
-
-            }
-            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
-            {
-                currentInput += Vector2.up;
-            }
-            if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
-            {
-                currentInput += Vector2.down;
-            }
-
-            if (currentInput.magnitude > 0)
-            {
-                //Our character is accelerating
-                currentVelocity += acceleration * Time.deltaTime * (Vector3)currentInput.normalized;
-
-                if (currentVelocity.magnitude > maxSpeed)
-                {
-                    currentVelocity = currentVelocity.normalized * maxSpeed;
-                }
+                currentVelocity = Vector3.zero;
             }
             else
             {
-                //Our character is decelerating
-                Vector3 velocityDelta = (Vector3)currentVelocity.normalized * deceleration * Time.deltaTime;
-                if (velocityDelta.magnitude > currentVelocity.magnitude)
-                {
-                    currentVelocity = Vector3.zero;
-                }
-                else
-                {
-                    currentVelocity -= velocityDelta;
-                }
+                currentVelocity -= velocityDelta;
             }
-            transform.position += currentVelocity * Time.deltaTime;
         }
+        transform.position += currentVelocity * Time.deltaTime;
+
+
+
+
 
     }
 
@@ -154,7 +173,7 @@ public class Player : MonoBehaviour
         int anglesIncrement = 360 / circlePoints;
 
         //Creating a list that holds the angles
-        List<float> angles = new List<float> () ;
+        List<float> angles = new List<float>();
 
         //for loop that populate the list with a series of angles.
         for (int index = 0; index <= circlePoints; index++)
@@ -164,18 +183,18 @@ public class Player : MonoBehaviour
             //second loop to cycle through the list (now populated) and to set the coorinate
             for (int i = 1; i < angles.Count; i++)
             {
-            Vector3 pointA = transform.position + new Vector3(Mathf.Cos(angles[i - 1] * Mathf.Deg2Rad) * radius , Mathf.Sin(angles[i - 1] * Mathf.Deg2Rad) * radius);
+                Vector3 pointA = transform.position + new Vector3(Mathf.Cos(angles[i - 1] * Mathf.Deg2Rad) * radius, Mathf.Sin(angles[i - 1] * Mathf.Deg2Rad) * radius);
 
-            Vector3 pointB = transform.position + new Vector3(Mathf.Cos(angles[i] * Mathf.Deg2Rad) * radius, Mathf.Sin(angles[i] * Mathf.Deg2Rad) * radius);
+                Vector3 pointB = transform.position + new Vector3(Mathf.Cos(angles[i] * Mathf.Deg2Rad) * radius, Mathf.Sin(angles[i] * Mathf.Deg2Rad) * radius);
 
 
 
-                Debug.DrawLine (pointA, pointB, detectionColor);
+                Debug.DrawLine(pointA, pointB, detectionColor);
             }
 
         }
         //checks if enemy is within radius range
-        if (Vector3.Distance(transform.position , enemyTransform.position) <= radius)
+        if (Vector3.Distance(transform.position, enemyTransform.position) <= radius)
         {
             detectionColor = Color.red;
         }
@@ -201,45 +220,27 @@ public class Player : MonoBehaviour
 
         }
 
-            //second loop to cycle through the list (now populated) and to set the coorinate
+        //second loop to cycle through the list (now populated) and to set the coorinate
 
-            for (int i = 1; i < powerUpAngles.Count; i++)
-            {
-                Vector3 powerCoord = transform.position + new Vector3(Mathf.Cos(powerUpAngles[i -1] * Mathf.Deg2Rad) * radius, Mathf.Sin(powerUpAngles[i -1] * Mathf.Deg2Rad) * radius);
-                Instantiate(powerUpPrefab, powerCoord, Quaternion.identity);
+        for (int i = 1; i < powerUpAngles.Count; i++)
+        {
+            Vector3 powerCoord = transform.position + new Vector3(Mathf.Cos(powerUpAngles[i - 1] * Mathf.Deg2Rad) * radius, Mathf.Sin(powerUpAngles[i - 1] * Mathf.Deg2Rad) * radius);
+            Instantiate(powerUpPrefab, powerCoord, Quaternion.identity);
 
 
-            }
+        }
 
     }
 
-    float rotationSpeed = 3f;
-    float rotationAngles = 0f;
-    float rotation = 0f;
+
 
     public void PlayerRotation()
     {
 
 
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
-        {
-            rotation = 90;
-        }
-        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
-        {
-            rotation = -90;
-        }
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
-        {
-            rotation = 0;
-        }
-        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
-        {
-            rotation = 180;
-        }
 
-        rotationAngles = Mathf.Lerp(rotationAngles, rotation, Time.deltaTime * rotationSpeed);
-        transform.eulerAngles = new Vector3(0, 0, rotationAngles);
+
+
 
     }
 

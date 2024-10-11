@@ -11,6 +11,9 @@ public class Missile : MonoBehaviour
     public float reachTime;
     private float reachPercentage;
 
+    float rotationAngle = 0f;
+
+
 
     private void Start()
     {
@@ -26,23 +29,32 @@ public class Missile : MonoBehaviour
 
 
 
-        transform.position = Vector3.Lerp(transform.position, enemyPosition.position , lerpCurve.Evaluate(reachPercentage));
+        transform.position = Vector3.Lerp(transform.position, enemyPosition.position, lerpCurve.Evaluate(reachPercentage));
+
+
+
+        Destroy(gameObject, 5.5f);
+        
+        
+        
+        
+        //This part is for the rotation 
         //transform.rotation = Vector3.RotateTowards(transform.position,enemyPosition.position, 10f, 10f);
         //transform.LookAt(enemyPosition.position);
         // transform.eulerAngles = enemyPosition.position;
 
 
-        transform.Rotate(new Vector3 (0,enemyPosition.position.y , 0));
+        transform.Rotate(new Vector3(0, enemyPosition.position.y, 0));
         //transform.Rotate(new Vector3(0, 0, enemyPosition.position.z));
 
 
-        //This part is for the rotation 
-
-
-
         Vector3 direction = enemyPosition.position - transform.position;
-        float angle = Vector3.Angle(direction, transform.forward);
-        
+
+        rotationAngle = Mathf.Atan2(direction.y, direction.x);
+        transform.rotation = Quaternion.Euler(0,0,rotationAngle);
+
+       // float angle = Vector3.Angle(direction, transform.forward);
+
 
 
 
@@ -59,6 +71,6 @@ public class Missile : MonoBehaviour
 
     }
 
-  
+
 
 }
