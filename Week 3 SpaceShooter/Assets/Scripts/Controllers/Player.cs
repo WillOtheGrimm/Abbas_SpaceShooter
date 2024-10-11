@@ -45,7 +45,7 @@ public class Player : MonoBehaviour
 
     //Final assignment changes:
     public GameObject homingMissile;
-
+    public float warpDistance;
 
     void Start()
     {
@@ -59,7 +59,6 @@ public class Player : MonoBehaviour
 
 
         PlayerMovement();
-        PlayerRotation();
 
         EnemyRadar(detectionRange, numberOfPoints);
 
@@ -76,7 +75,11 @@ public class Player : MonoBehaviour
             Instantiate(homingMissile, transform.position, transform.rotation);
 
         }
-
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Warp(warpDistance);
+            Debug.Log("working");
+        }
 
 
 
@@ -132,9 +135,9 @@ public class Player : MonoBehaviour
 
 
             //This is for the rotation (thx to Marco)
-            rotationAngles = Mathf.LerpAngle(rotationAngles, rotation * Mathf.Rad2Deg -90, Time.deltaTime * rotationSpeed);
+            rotationAngles = Mathf.LerpAngle(rotationAngles, rotation * Mathf.Rad2Deg - 90, Time.deltaTime * rotationSpeed);
             transform.eulerAngles = new Vector3(0, 0, rotationAngles);
-            Debug.Log(currentInput);
+            //Debug.Log(currentInput);
 
             if (currentVelocity.magnitude > maxSpeed)
             {
@@ -234,13 +237,9 @@ public class Player : MonoBehaviour
 
 
 
-    public void PlayerRotation()
+    public void Warp(float distance)
     {
-
-
-
-
-
+        transform.position += transform.up * distance;
 
     }
 
